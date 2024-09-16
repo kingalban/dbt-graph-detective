@@ -1,0 +1,10 @@
+- id: final_dynamic_tables_have_lag
+  name: final dynamic tables have non-DOWNSTREAM lag
+  description: 'Enforce that dynamic tables which do no have dynamic tables as children do not have DOWNSTREAM target lag'
+  entry: 'dbt-graph-detective search --predicate terminal-dynamic-table-with-DOWNSTREAM-lag --error-on-match'
+  language: python
+  stages: [pre-commit]
+  types: [text]
+  pass_filenames: false
+  files: "^.*\\.(sql|yaml|yml)$"
+  verbose: true
