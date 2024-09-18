@@ -36,3 +36,16 @@ eg: guards against this situation, where models `B` and `C` won't be refreshed (
 [A target_lag: DOWNSTREAM] ─> [B target_lag: DOWNSTREAM] ─> [C target_lab: DOWNSTREAM]
                          └──> [D target_lag: 15 minutes]
 ~~~
+
+
+### literal_tables_not_downstream_dynamic_tables
+dbt-snowflake's dynamic tables are not updated when running `dbt run`, only on their own schedule, or with `--full-refresh`.
+Therefore, data does not flow through the DAG as you might expect with `dbt run`. 
+There will be a lag introduced by dynamic tables.
+
+eg: guards against this situation, where models `C` and `D` won't show new data from `A` 
+until **both** the dynamic table `B` has refreshed itself, and `dbt run` is run again.
+~~~
+[A table] ─> [B dynamic_table] ─> [C table]
+                             └──> [D incremental]
+~~~

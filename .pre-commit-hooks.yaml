@@ -1,7 +1,18 @@
 - id: final_dynamic_tables_have_lag
   name: final dynamic tables have non-DOWNSTREAM lag
-  description: 'Enforce that dynamic tables which do no have dynamic tables as children do not have DOWNSTREAM target lag'
+  description: 'Check that dynamic tables which do no have dynamic tables as children do not have DOWNSTREAM target lag'
   entry: 'dbt-graph-detective search --predicate terminal-dynamic-table-with-DOWNSTREAM-lag --error-on-match'
+  language: python
+  stages: [pre-commit]
+  types: [text]
+  pass_filenames: false
+  files: "^.*\\.(sql|yaml|yml)$"
+  verbose: true
+
+- id: literal_tables_not_downstream_dynamic_tables
+  name: literal tables not downstream dynamic tables
+  description: 'Check that literal tables (table/incremental materialization) do not have dynamic tables upstream, can cause stale data'
+  entry: 'dbt-graph-detective search --predicate static-table-with-upstream-dynamic-table --error-on-match'
   language: python
   stages: [pre-commit]
   types: [text]
